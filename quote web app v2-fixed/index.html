@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quote Storage App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Quote Storage</h1>
+    <div class="controls">
+      <input type="text" id="quoteInput" placeholder="Quote" />
+      <input type="text" id="authorInput" placeholder="Author" />
+      <input type="text" id="categoryInput" placeholder="Category" />
+      <input type="date" id="dateInput" />
+      <button id="addBtn">Add</button>
+      <button id="toggleTheme">🌓</button>
+    </div>
+    <div>
+      <label for="categoryFilter">Filter by Category:</label>
+      <select id="categoryFilter">
+        <option value="all">All</option>
+      </select>
+    </div>
+    <div id="quoteList"></div>
+    <button id="randomBtn">🎲 Show Random Quote</button>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
