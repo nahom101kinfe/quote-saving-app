@@ -13,6 +13,8 @@ function addQuote() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
   clearInputs();
   renderQuotes();
+  updateCategoryFilter();
+  showRandomQuote();
 }
 
 function clearInputs() {
@@ -32,7 +34,10 @@ function renderQuotes(filtered = quotes) {
       <p>"\${q.text}"</p>
       <div class="quote-footer">
         <span>— \${q.author || "Unknown"}, \${q.category || "Uncategorized"} (\${q.date})</span>
-        <button onclick="deleteQuote(\${index})">🗑️</button>
+        <div>
+          <button onclick="editQuote(\${index})">✏️ Edit</button>
+          <button onclick="deleteQuote(\${index})">🗑️ Delete</button>
+        </div>
       </div>
     \`;
     list.appendChild(div);
@@ -43,6 +48,22 @@ function deleteQuote(index) {
   quotes.splice(index, 1);
   localStorage.setItem("quotes", JSON.stringify(quotes));
   renderQuotes();
+  updateCategoryFilter();
+  showRandomQuote();
+}
+
+function editQuote(index) {
+  const q = quotes[index];
+  const newText = prompt("Edit quote text:", q.text);
+  const newAuthor = prompt("Edit author:", q.author);
+  const newCategory = prompt("Edit category:", q.category);
+  if (newText !== null) quotes[index].text = newText;
+  if (newAuthor !== null) quotes[index].author = newAuthor;
+  if (newCategory !== null) quotes[index].category = newCategory;
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+  renderQuotes();
+  updateCategoryFilter();
+  showRandomQuote();
 }
 
 function searchQuotes() {
@@ -55,4 +76,48 @@ function searchQuotes() {
   renderQuotes(filtered);
 }
 
+function updateCategoryFilter() {
+  const categories = [...new Set(quotes.map(q => q.category).filter(Boolean))];
+  const select = document.getElementById("categoryFilter");
+  select.innerHTML = '<option value="">All Categories</option>';
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    select.appendChild(option);
+  });
+}
+
+function filterByCategory() {
+  const selected = document.getElementById("categoryFilter").value;
+  const filtered = selected
+    ? quotes.filter(q => q.category === selected)
+    : quotes;
+  renderQuotes(filtered);
+}
+
+function showRandomQuote() {
+  const q = quotes[Math.floor(Math.random() * quotes.length)];
+  if (!q) return;
+  document.getElementById("randomQuote").innerHTML = \`
+    <p>"\${q.text}"</p>
+    <div class="quote-footer">
+      <span>— \${q.author || "Unknown"}, \${q.category || "Uncategorized"} (\${q.date})</span>
+    </div>
+  \`;
+}
+
+document.getElementById("toggleTheme").onclick = () => {
+  document.body.classList.toggle("light-mode");
+  localStorage.setItem("theme", document.body.classList.contains("light-mode") ? "light" : "dark");
+};
+
+function applySavedTheme() {
+  const theme = localStorage.getItem("theme");
+  if (theme === "light") document.body.classList.add("light-mode");
+}
+
+applySavedTheme();
+updateCategoryFilter();
 renderQuotes();
+showRandomQuote();
